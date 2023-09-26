@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.raggle.half_dream.api.DreamEntity;
+import com.raggle.half_dream.api.DreamHorse;
 import com.raggle.half_dream.api.DreamPlayer;
 
 import net.minecraft.entity.LivingEntity;
@@ -30,7 +31,7 @@ public abstract class MobEntityMixin implements DreamEntity {
 	}
 	@Inject(method = "interact", at = @At("HEAD"), cancellable = true)
 	public final void interact(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		if(player instanceof DreamPlayer dp && dp.isDream() != this.isDream())
+		if(player instanceof DreamPlayer dp && dp.isDream() != this.isDream() && !(this instanceof DreamHorse))
 			cir.setReturnValue(ActionResult.FAIL);
 	}
 

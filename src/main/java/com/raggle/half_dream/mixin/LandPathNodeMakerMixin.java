@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.raggle.half_dream.api.DreamEntity;
-import com.raggle.half_dream.common.block.DreamingBlock;
-import com.raggle.half_dream.util.DreamlessBlockUtil;
+import com.raggle.half_dream.common.block.DreamBlock;
+import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,7 +25,7 @@ public abstract class LandPathNodeMakerMixin extends PathNodeMaker{
 	private static void getCommonNodeType(BlockView world, BlockPos pos, CallbackInfoReturnable<PathNodeType> cir) {
 		BlockState blockState = world.getBlockState(pos);
 		Block block = blockState.getBlock();
-		if(block instanceof DreamingBlock) {
+		if(block instanceof DreamBlock) {
 			cir.setReturnValue(PathNodeType.DOOR_OPEN);
 		}
 	}
@@ -33,7 +33,7 @@ public abstract class LandPathNodeMakerMixin extends PathNodeMaker{
 	@Inject(method = "adjustNodeType", at = @At("HEAD"), cancellable = true)
 	private void adjustNodeType(BlockView world, BlockPos pos, PathNodeType type, CallbackInfoReturnable<PathNodeType> cir) {
 		if(this.entity instanceof DreamEntity de && de.isDream()) {
-			if(world instanceof World && DreamlessBlockUtil.isDreamless(pos, (World)world)) {
+			if(world instanceof World && HDUtil.isDreamless(pos, (World)world)) {
 				cir.setReturnValue(PathNodeType.OPEN);
 			}
 		}

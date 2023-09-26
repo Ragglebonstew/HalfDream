@@ -11,6 +11,8 @@ import com.raggle.half_dream.networking.HDMessaging;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin implements DreamServerPlayer {
@@ -23,6 +25,8 @@ public abstract class ServerPlayerEntityMixin implements DreamServerPlayer {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeBoolean(isDream());
 		ServerPlayNetworking.send(player, HDMessaging.DREAM_SYNC, buf);
+		//play sound effect
+		player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.BLOCK_CONDUIT_AMBIENT, SoundCategory.BLOCKS);
 	}
 	
 	@Override

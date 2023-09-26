@@ -46,10 +46,12 @@ public class HalfDream implements ModInitializer {
 /*
 bug list
 - water flow gets wack w/ dream blocks
-- tp desyncing server
-- rain hitting dream blocks
 - broken pathfinding
-- chunk packages are unoptimised
+	- entities jump while passing through dream blocks
+	- dream mobs get stuck in dreamless blocks
+- chunk packages are unoptimised (sends all blocks instead of one when needed)
+* Sodium renders dreamless blocks when it shouldn't
 
-
+ideas
+- only travel into dream world during night. If don't leave by sunrise, semi-trapped
 */

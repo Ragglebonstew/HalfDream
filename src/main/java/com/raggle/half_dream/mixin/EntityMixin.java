@@ -8,7 +8,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.raggle.half_dream.api.DreamEntity;
+import com.raggle.half_dream.api.DreamHorse;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
@@ -25,6 +28,15 @@ public abstract class EntityMixin implements DreamEntity{
 	@Override
 	public void setDream(boolean b) {
 		getPersistantData().putBoolean("half_dream", b);
+		getPersistantData().putByte("level", b ? 0 : (byte)1);
+	}
+	@Override
+	public byte getDream() {
+		return getPersistantData().getByte("level");
+	}
+	@Override
+	public void setDream(byte b) {
+		getPersistantData().putByte("level", b);
 	}
 	@Override
 	public NbtCompound getPersistantData() {
@@ -54,6 +66,20 @@ public abstract class EntityMixin implements DreamEntity{
 	private void isInsideWall(CallbackInfoReturnable<Boolean> cir) {
 		if(this.isDream()) {
 			cir.setReturnValue(false);
+		}
+	}
+	
+	@Inject(method = "addPassenger", at = @At("TAIL"))
+	protected void addPassenger(Entity passenger, CallbackInfo ci) {
+		if ((Object)this instanceof DreamHorse dh && passenger instanceof PlayerEntity player) {
+			dh.setPlayer(player);
+		}
+	}
+
+	@Inject(method = "removePassenger", at = @At("TAIL"))
+	protected void removePassenger(Entity passenger, CallbackInfo ci) {
+		if ( (Object)this instanceof DreamHorse dh && passenger instanceof PlayerEntity player) {
+			dh.setPlayer(null);
 		}
 	}
 }

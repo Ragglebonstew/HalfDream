@@ -14,7 +14,7 @@ public abstract class ClientPlayerEntityMixin implements DreamClientPlayer {
 	
 	@Override
 	public boolean isDream() {
-		return SequenceManager.isCurrentSequenceImportant() ? SequenceManager.getSequenceDreamState() : getPersistantData().getBoolean("half_dream");
+		return SequenceManager.isCurrentSequenceImportant() ? SequenceManager.getSequence().getDreamState() : getPersistantData().getBoolean("half_dream");
 	}
 	
 	@Override
