@@ -1,60 +1,88 @@
 package com.raggle.half_dream.common.component;
 
 import java.util.ArrayList;
-
-import com.raggle.half_dream.HalfDream;
 import com.raggle.half_dream.api.DreamlessComponent;
 import com.raggle.half_dream.common.registry.HDComponentRegistry;
+import com.raggle.half_dream.util.HDUtil;
+
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
 public class DreamlessChunkComponent implements DreamlessComponent, AutoSyncedComponent {
 
-	public final Chunk provider;
-	private final ArrayList<BlockPos> dreamlessList;
+	private final Chunk provider;
+	private ArrayList<Long> dreamlessPosList;
+	private long renderPos;
 	
 	public DreamlessChunkComponent(Chunk chunk) {
 		this.provider = chunk;
-		this.dreamlessList = new ArrayList<BlockPos>();
+		this.dreamlessPosList = new ArrayList<Long>();
 	}
 
 	@Override
 	public void readFromNbt(NbtCompound tag) {
-		for(long entry : tag.getLongArray("dreamlessList")) {
-			dreamlessList.add(BlockPos.fromLong(entry));
+		this.dreamlessPosList.clear();
+		for(long entry : tag.getLongArray("dreampos")) {
+			this.addPosToList(BlockPos.fromLong(entry));
 		}
 	}
 
 	@Override
 	public void writeToNbt(NbtCompound tag) {
-		long[] list = new long[dreamlessList.size()];
-		for(int i = 0; i < dreamlessList.size(); i++) {
-			list[i] = dreamlessList.get(i).asLong();
+		long[] posList = new long[this.dreamlessPosList.size()];
+		for(int i = 0; i < posList.length; i++) {
+			posList[i] = this.dreamlessPosList.get(i);
 		}
-		tag.putLongArray("dreamlessList", list);
+		tag.putLongArray("dreampos", posList);
 	}
-
 	@Override
-	public ArrayList<BlockPos> getDreamlessList() {
-		return dreamlessList;
-	}
+	public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+        NbtCompound tag = new NbtCompound();
+        this.writeToNbt(tag);
+		tag.putLong("renderpos", this.renderPos);
+        buf.writeNbt(tag);
+		provider.setNeedsSaving(true);
+    }
+	@Override
+	public void applySyncPacket(PacketByteBuf buf) {
+        NbtCompound tag = buf.readNbt();
+        if (tag != null) {
+            this.readFromNbt(tag);
+    		HDUtil.scheduleChunkRenderAt(BlockPos.fromLong(tag.getLong("renderpos")));
+			provider.setNeedsSaving(true);
+        }
+    }
 
 	@Override
 	public boolean isDreamless(BlockPos pos) {
-		if(this.dreamlessList.isEmpty()) {
+		if(this.dreamlessPosList.isEmpty()) {
 			return false;
 		}
-		return dreamlessList.contains(pos);
+		return dreamlessPosList.contains(pos.asLong());
 	}
 
 	@Override
-	public void addPosToList(BlockPos pos) {
-		if(!dreamlessList.contains(pos)) {
-			HalfDream.LOGGER.info("adding pos to list: " + pos);
-			dreamlessList.add(pos);
+	public boolean addPosToList(BlockPos pos) {
+		if(!dreamlessPosList.contains(pos.asLong())) {
+			this.dreamlessPosList.add(pos.asLong());
+			this.renderPos = pos.asLong();
 			HDComponentRegistry.DREAMLESS.sync(provider);
+			return true;
 		}
+		return false;
+	}
+
+	@Override
+	public boolean removePosFromList(BlockPos pos) {
+		if(this.dreamlessPosList.remove(pos.asLong())) {
+			this.renderPos = pos.asLong();
+			HDComponentRegistry.DREAMLESS.sync(provider);
+			return true;
+		}
+		return false;
 	}
 }

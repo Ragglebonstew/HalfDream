@@ -2,17 +2,8 @@ package com.raggle.half_dream.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.raggle.half_dream.api.DreamClientPlayer;
-import com.raggle.half_dream.common.registry.HDStatusEffectRegistry;
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffects;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
@@ -26,9 +17,4 @@ public abstract class LivingEntityMixin {
 			player.syncDream();
 		}
 	}*/
-	
-	//@Inject(method = "updatePotionVisibility", at = @At("TAIL"))
-	private void updatePotionVisibility(CallbackInfo ci) {
-		((LivingEntity)(Object)this).setInvisible(this.hasStatusEffect(StatusEffects.INVISIBILITY) || this.hasStatusEffect(HDStatusEffectRegistry.HALF_ASLEEP));
-	}
 }

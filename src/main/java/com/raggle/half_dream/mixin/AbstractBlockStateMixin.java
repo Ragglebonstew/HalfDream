@@ -8,17 +8,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.raggle.half_dream.api.DreamClientPlayer;
 import com.raggle.half_dream.api.DreamEntity;
-import com.raggle.half_dream.common.block.DreamingBlock;
-import com.raggle.half_dream.util.DreamlessBlockUtil;
+import com.raggle.half_dream.common.block.DreamBlock;
+import com.raggle.half_dream.common.registry.HDTagRegistry;
+import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -36,17 +36,18 @@ public abstract class AbstractBlockStateMixin {
         
         if(context instanceof EntityShapeContext esc) {
             Entity entity = esc.getEntity();
-            if(entity != null && entity instanceof DreamEntity dreamEntity) {
-            	if(!dreamEntity.isDream()) {
-            		if(getBlock() instanceof DreamingBlock)
-            			cir.setReturnValue(VoxelShapes.empty());
-            	}
-            	else {
-            		if(DreamlessBlockUtil.isDreamless(pos, (World)world)) {
+            if(entity instanceof DreamEntity de) {
+            	if(de.isDream() || entity instanceof ItemEntity item && item.getStack().isIn(HDTagRegistry.DREAMING_ITEMS)) {
+            		if(world instanceof World w && HDUtil.isDreamless(pos, w)) {
             			cir.setReturnValue(VoxelShapes.empty());
             		}
             	}
+            	else {
+            		if(this.getBlock() instanceof DreamBlock)
+            			cir.setReturnValue(VoxelShapes.empty());
+            	}
             }
+			
         }
     }
 	
@@ -55,20 +56,34 @@ public abstract class AbstractBlockStateMixin {
 		if(context instanceof EntityShapeContext esc && world instanceof World aw) {
 			Entity entity = esc.getEntity();
 			if(entity != null && entity instanceof DreamEntity de) {
-				if(de.isDream() && DreamlessBlockUtil.isDreamless(pos, aw))
-					cir.setReturnValue(VoxelShapes.empty());
+				if(de.isDream()) {
+					if(HDUtil.isDreamless(pos, aw))
+						cir.setReturnValue(VoxelShapes.empty());
+				}
+				else {
+					if(this.getBlock() instanceof DreamBlock)
+						cir.setReturnValue(VoxelShapes.empty());
+				}
 			}
 		}
 	}
+	
 	@ClientOnly
 	@Inject(method = "getCameraCollisionShape", at = @At("HEAD"), cancellable = true)
 	private void getCameraCollisionShape(BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
-		
-		if(world instanceof World aw && DreamlessBlockUtil.isDreamless(pos, aw)) {
-			if(context instanceof EntityShapeContext esc) {
-				Entity entity = esc.getEntity();
-				if(entity != null && entity instanceof DreamEntity de && de.isDream()) {
-					cir.setReturnValue(VoxelShapes.empty());
+
+		if(context instanceof EntityShapeContext esc) {
+			Entity entity = esc.getEntity();
+			if(entity != null && entity instanceof DreamEntity de) {
+				if(de.isDream()) {
+					if(world instanceof World aw && HDUtil.isDreamless(pos, aw)) {
+						cir.setReturnValue(VoxelShapes.empty());	
+					}
+				}
+				else {
+					if(this.getBlock() instanceof DreamBlock) {
+						cir.setReturnValue(VoxelShapes.empty());	
+					}
 				}
 			}
 		}
@@ -77,14 +92,14 @@ public abstract class AbstractBlockStateMixin {
 	
 	@Inject(method = "onEntityCollision", at = @At("HEAD"), cancellable = true)
     private void onEntityCollision(World world, BlockPos pos, Entity entity, CallbackInfo ci) {
-		if(entity instanceof DreamEntity livingEntity) {
-			if(livingEntity.isDream()) {
-				if(DreamlessBlockUtil.isDreamless(pos, entity.getWorld())) {
+		if(entity instanceof DreamEntity de) {
+			if(de.isDream() || entity instanceof ItemEntity item && item.getStack().isIn(HDTagRegistry.DREAMING_ITEMS)) {
+				if(HDUtil.isDreamless(pos, world)) {
 					ci.cancel();
 				}
 			}
 			else {
-				if(world.getBlockState(pos).getBlock() instanceof DreamingBlock) {
+				if(this.getBlock() instanceof DreamBlock) {
 					ci.cancel();
 				}
 			}
@@ -93,11 +108,16 @@ public abstract class AbstractBlockStateMixin {
     }
 	@Inject(method = "shouldBlockVision", at = @At("HEAD"), cancellable = true)
 	private void shouldBlockVision(BlockView world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-		ClientPlayerEntity player = DreamlessBlockUtil.getClientPlayer();
-		if(player != null && player instanceof DreamClientPlayer dcp && dcp.isDream()) {
-			if(world instanceof World aw && DreamlessBlockUtil.isDreamless(pos, aw)) {
-				cir.setReturnValue(false);
+		if(HDUtil.hasClientPlayer()) {
+			if(HDUtil.isPlayerDream()) {
+				if(world instanceof World aw && HDUtil.isDreamless(pos, aw)) 
+					cir.setReturnValue(false);
+			}
+			else {
+				if(this.getBlock() instanceof DreamBlock) 
+					cir.setReturnValue(false);
 			}
 		}
 	}
+	
 }

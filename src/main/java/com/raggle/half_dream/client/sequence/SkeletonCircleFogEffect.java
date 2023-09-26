@@ -4,30 +4,27 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
-import com.raggle.half_dream.api.HDFogParameters;
 import com.raggle.half_dream.networking.HDMessaging;
 
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 
 @ClientOnly
-public class SkeletonCircleSequence extends DreamSequence{
+public class SkeletonCircleFogEffect extends FogEffect{
+
+	private int totalLength;
+	private int progress;
 	
-	//initial conditions reflect color of default dream fog
-	public float red = 0.423F;
-	public float green = 0.634F;
-	public float blue = 0.785F;
-	public float fogEnd = 24.0F;
-	
-	public SkeletonCircleSequence() {
-		this.ticks = 0;
+	public SkeletonCircleFogEffect() {
 		this.totalLength = 1200;
+		
+		red = 0.423F;
+		green = 0.634F;
+		blue = 0.785F;
+		fogEnd = 24.0F;
 	}
-	
 	@Override
-	public void tick() {
-		ticks++;
+	public void tick(MinecraftClient client) {
 		
 		if(!this.cancelled) {
 			this.progress++;
@@ -38,18 +35,11 @@ public class SkeletonCircleSequence extends DreamSequence{
 		
 		if (progress > totalLength + 244) {
 			finished = true;
-			PacketByteBuf buf = PacketByteBufs.create();
-			ClientPlayNetworking.send(HDMessaging.DEEP_DREAM, buf);
 		}
 		else if(progress < 0) {
 			finished = true;
 		}
-		
-	}
-	
-	@Override
-	public void render(GuiGraphics drawContext, float tickDelta) {
-		
+		//set colors
 		if(progress < totalLength/2) {
 			setRedColors();
 		}
@@ -60,8 +50,13 @@ public class SkeletonCircleSequence extends DreamSequence{
 			setBlackColors();
 		}
 		
-		
 	}
+	@Override
+	public void stop() {
+		PacketByteBuf buf = PacketByteBufs.create();
+		ClientPlayNetworking.send(HDMessaging.DEEP_DREAM, buf);
+	}
+	
 	private void setRedColors() {
 		
 		float scale = 1 - progress*2.0F/totalLength;
@@ -92,16 +87,4 @@ public class SkeletonCircleSequence extends DreamSequence{
 	
 	}
 
-	public void applyFogAffects(HDFogParameters fogParameters) {
-		float f = 5.0F;
-		if (fogParameters.fogType == BackgroundRenderer.FogType.FOG_SKY) {
-			fogParameters.fogStart = 0.0F;
-		} else {
-			fogParameters.fogStart = f * 0.25F;
-		}
-		fogParameters.red = red;
-		fogParameters.green = green;
-		fogParameters.blue = blue;
-		fogParameters.fogEnd = fogEnd;
-	}
 }

@@ -5,7 +5,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import com.raggle.half_dream.api.DreamClientPlayer;
 import com.raggle.half_dream.client.sequence.FallingHalfAsleepSequence;
 import com.raggle.half_dream.client.sequence.SequenceManager;
-import com.raggle.half_dream.client.sequence.SkeletonCircleSequence;
+import com.raggle.half_dream.client.sequence.SkeletonCircleFogEffect;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -29,7 +29,7 @@ public class HDS2C {
 		player.setListSize(size);
 		if(size >= 4) {
 			client.execute(() -> {
-				SequenceManager.start(new SkeletonCircleSequence());
+				SequenceManager.setFogEffect(new SkeletonCircleFogEffect());
 			});
 		}
 	}

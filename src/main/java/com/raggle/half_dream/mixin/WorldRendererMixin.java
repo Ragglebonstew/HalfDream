@@ -7,10 +7,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.raggle.half_dream.api.DreamClientPlayer;
-import com.raggle.half_dream.util.DreamlessBlockUtil;
+import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.WorldRenderer;
@@ -31,22 +30,15 @@ public abstract class WorldRendererMixin {
 	
 	@Inject(method = "getLightmapCoordinates(Lnet/minecraft/world/BlockRenderView;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)I", at = @At("TAIL"), cancellable = true)
 	private static void getLightmapCoordinates(BlockRenderView world, BlockState state, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-		ClientPlayerEntity player = DreamlessBlockUtil.getClientPlayer();
-		if(player instanceof DreamClientPlayer dcp && dcp.isDream()) {
+		if(HDUtil.isPlayerDream()) {
 			
 			int lightmap = cir.getReturnValue();
 			int blockLight = LightmapTextureManager.getBlockLightCoordinates(lightmap);
-			double distance = pos.getSquaredDistanceToCenter(player.getPos());
-			
-			int maxLight = 7;
-			int farOut = (int)(maxLight - (Math.pow(distance, 0.5)));
-			
-			if(farOut > blockLight && distance < Math.pow(maxLight, 2)) {
-				blockLight = farOut;
+			if(HDUtil.isDreamless(pos)) {
+				blockLight = 4;
 			}
-			
+
 			cir.setReturnValue(0 << 20 | blockLight << 4);
 		}
 	}
-	//*/
 }

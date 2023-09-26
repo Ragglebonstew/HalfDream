@@ -11,11 +11,9 @@ public class DreamSequence {
 	protected static MinecraftClient client = MinecraftClient.getInstance();
 
 	protected int ticks;
-	protected int progress;
 	protected int totalLength = 60;
 	protected boolean finished;
 	protected boolean cancelled;
-
 	
 	public boolean isSequenceImportant() {
 		return false;
@@ -23,6 +21,8 @@ public class DreamSequence {
 	public boolean getDreamState() {
 		return false;
 	}
+	public void start() {}
+	public void stop() {}
 	public void cancel() {
 		this.cancelled = true;
 	}

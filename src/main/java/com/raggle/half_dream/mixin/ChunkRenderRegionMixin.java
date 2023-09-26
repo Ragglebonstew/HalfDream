@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.raggle.half_dream.api.DreamClientPlayer;
-import com.raggle.half_dream.util.DreamlessBlockUtil;
+import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -20,7 +20,7 @@ public class ChunkRenderRegionMixin {
 
 	@Inject(method = "getBlockState", at = @At("HEAD"), cancellable = true)
 	private void getBlockState(BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
-		if(DreamlessBlockUtil.isDreamless(pos) && DreamlessBlockUtil.getClientPlayer() instanceof DreamClientPlayer dcp && dcp.isDream()){
+		if(HDUtil.isDreamless(pos) && HDUtil.getClientPlayer() instanceof DreamClientPlayer dcp && dcp.isDream()){
 			cir.setReturnValue(Blocks.AIR.getDefaultState());
 		}
 	}

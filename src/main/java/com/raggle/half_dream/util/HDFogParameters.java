@@ -1,4 +1,4 @@
-package com.raggle.half_dream.api;
+package com.raggle.half_dream.util;
 
 import com.mojang.blaze3d.shader.FogShape;
 

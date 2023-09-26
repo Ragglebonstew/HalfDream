@@ -1,17 +1,41 @@
 package com.raggle.half_dream.client.sequence;
 
+import com.raggle.half_dream.HalfDream;
+import com.raggle.half_dream.api.DreamClientPlayer;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class SequenceManager {
 
 	private static DreamSequence dreamSequence;
+	private static FogEffect fogEffect;
 
 	public static void tick(MinecraftClient client) {
-		if (hasSequence() && client.player != null && !client.isPaused()) {
+		if(client.isPaused())
+			return;
+		
+		//fogEffect ticking
+		if(fogEffect != null) {
+			fogEffect.tick(client);
+			if(fogEffect.finished) {
+				fogEffect.stop();
+				fogEffect = null;
+			}
+		}
+		else if(client.player instanceof DreamClientPlayer dcp && dcp.isDream()) {
+			setFogEffect(FogEffect.DREAM_FOG);
+			HalfDream.LOGGER.info("Setting fog to default dream fog");
+		}
+			
+		
+		//sequence ticking
+		if (hasSequence() && client.player != null) {
 			dreamSequence.tick();
-			if(dreamSequence.finished)
+			if(dreamSequence.finished) {
+				dreamSequence.stop();
 				dreamSequence = null;
+			}
 		}
 	}
 	public static void render(GuiGraphics drawContext, float tickDelta) {
@@ -21,11 +45,15 @@ public class SequenceManager {
 	public static void start(DreamSequence newSequence) {
 		if(!hasSequence()) {
 			dreamSequence = newSequence;
+			dreamSequence.start();
 		}
 		//if dream status changes mid-animation
 		else if(newSequence instanceof FallingHalfAsleepSequence newFhas) {
 			if(dreamSequence instanceof FallingHalfAsleepSequence oldFhas) {
-				if(!oldFhas.hasTransitioned()) {
+				if(newFhas.getEndDream() == oldFhas.getEndDream()) {
+					return;
+				}
+				else if(!oldFhas.hasTransitioned()) {
 					oldFhas.setEndDream(newFhas.getEndDream());
 				}
 				else {
@@ -35,6 +63,7 @@ public class SequenceManager {
 			}
 			else {
 				dreamSequence = newSequence;
+				dreamSequence.start();
 			}
 			/*
 //			(toDream != dreamSequence.dreaming) 
@@ -55,9 +84,15 @@ public class SequenceManager {
 	public static DreamSequence getSequence() {
 		return dreamSequence;
 	}
-	public static boolean getSequenceDreamState() {
-		//only call if the sequence is important [ isCurrentSequenceImportant() ]
-		return dreamSequence.getDreamState();
+	public static boolean hasFogEffect() {
+		return fogEffect != null;
+	}
+	public static void setFogEffect(FogEffect effect) {
+		fogEffect = effect;
+		fogEffect.start();
+	}
+	public static FogEffect getFogEffect() {
+		return fogEffect;
 	}
 	public static boolean isCurrentSequenceImportant() {
 		if(!hasSequence()) {
