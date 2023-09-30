@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.raggle.half_dream.HalfDream;
 import com.raggle.half_dream.api.DreamHorse;
 import com.raggle.half_dream.api.DreamPlayer;
 import com.raggle.half_dream.common.entity.ai.goal.CrossRiverGoal;
@@ -30,9 +29,6 @@ public abstract class SkeletonHorseEntityMixin extends HorseBaseEntity implement
 	@Inject(method = "initCustomGoals", at = @At("TAIL"))
 	protected void initCustomGoals(CallbackInfo ci) {
 		this.goalSelector.add(1, new CrossRiverGoal((SkeletonHorseEntity)(Object)this));
-		if(this instanceof MobEntityAccessor mea) {
-			//mea.getGoalSelector().add(1, new CrossRiverGoal((SkeletonHorseEntity)(Object)this));
-		}
 	}
 	@Override
 	public boolean isDream() {
@@ -47,7 +43,6 @@ public abstract class SkeletonHorseEntityMixin extends HorseBaseEntity implement
 	@Override
 	public void setPlayer(PlayerEntity player) {
 		this.mountedPlayer = player;
-		HalfDream.LOGGER.info("setting mounted player!");
 	}
 
 

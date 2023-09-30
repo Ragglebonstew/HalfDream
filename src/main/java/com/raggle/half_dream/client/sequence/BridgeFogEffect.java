@@ -25,6 +25,7 @@ public class BridgeFogEffect extends FogEffect {
 		this.startFacing = startFacing;
 		this.startDream = startDream;
 		this.progress = 1;
+		this.alpha = this.startDream ? 1.0F : 0.0F;
 	}
 	@Override
 	public void tick(MinecraftClient client) {
@@ -36,8 +37,22 @@ public class BridgeFogEffect extends FogEffect {
 		}
 		if(this.progress > 30)
 			this.finished = true;
+
+		Vec3d dPos = HDUtil.getClientPlayer().getPos().subtract(this.startPos.ofCenter());
+		double x = dPos.x * this.startFacing.getVector().getX();
+		double z = dPos.z * this.startFacing.getVector().getZ();
+		double s;
+		s = (z + x)/10;
+		if(this.cancelled)
+			s = s/this.progress;
+		s = MathHelper.clamp(s, 0, 1);
+		if(this.startDream)
+			s = 1 - s;
+		
+		this.alpha = (float)s;
 		
 	}
+	@Deprecated
 	@Override
 	public void applyFogAffects(HDFogParameters fogParameters) {
 		super.applyFogAffects(fogParameters);
@@ -54,5 +69,6 @@ public class BridgeFogEffect extends FogEffect {
 			s = 1 - s;
 		
 		fogParameters.alpha = (float)s;
+		this.alpha = (float)s;
 	}
 }
