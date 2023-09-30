@@ -5,7 +5,6 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import com.raggle.half_dream.util.HDFogParameters;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BackgroundRenderer;
 
 @ClientOnly
 public abstract class FogEffect {
@@ -39,12 +38,6 @@ public abstract class FogEffect {
 	}
 	
 	public void applyFogAffects(HDFogParameters fogParameters) {
-		float f = 5.0F;
-		if (fogParameters.fogType == BackgroundRenderer.FogType.FOG_SKY) {
-			fogParameters.fogStart = 0.0F;
-		} else {
-			fogParameters.fogStart = f * 0.25F;
-		}
 		fogParameters.red = this.red;
 		fogParameters.green = this.green;
 		fogParameters.blue = this.blue;

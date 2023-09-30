@@ -23,13 +23,11 @@ public class CrossRiverGoal extends Goal{
 	
 	private Direction startFacing;
 	private BlockPos startPos;
-	private boolean clearedWaterCondition;
 	private boolean failed;
 
 	public CrossRiverGoal(SkeletonHorseEntity horse) {
 		this.horse = horse;
 		this.world = horse.getWorld();
-		this.clearedWaterCondition = false;
 		this.failed = false;
 	}
 	
@@ -53,7 +51,7 @@ public class CrossRiverGoal extends Goal{
 			}
 		}
 		
-		return holder.isIn(BiomeTags.RIVER);
+		return holder.isIn(BiomeTags.RIVER) && this.overWater();
 	}
 	@Override
 	public boolean shouldContinue() {
@@ -67,7 +65,6 @@ public class CrossRiverGoal extends Goal{
 	public void start() {
 		this.startFacing = horse.getHorizontalFacing();
 		this.startPos = horse.getBlockPos();
-		this.clearedWaterCondition = false;
 		if(horse instanceof DreamHorse dh && dh.getPlayer() instanceof DreamPlayer dp)
 			SequenceManager.setFogEffect(new BridgeFogEffect(this.startPos, this.startFacing, dp.isDream()));
 	}
@@ -81,13 +78,13 @@ public class CrossRiverGoal extends Goal{
 				!holder.isIn(BiomeTags.RIVER)
 				&& startFacing == horse.getHorizontalFacing()
 				&& (x > 0 || z > 0)//checks if the change in position is in the same direction as initial facing
-				&& this.clearedWaterCondition && !this.failed
+				&& !this.failed
 				&& horse instanceof DreamHorse dh
 				&& dh.getPlayer() instanceof DreamPlayer dp
 		) {
 			dp.setDream(!dp.isDream());
 		}
-		else {
+		else if(SequenceManager.hasFogEffect()){
 			SequenceManager.getFogEffect().cancel();
 		}
 	}
@@ -97,15 +94,14 @@ public class CrossRiverGoal extends Goal{
 			this.failed = true;
 			return;
 		}
-		if(this.clearedWaterCondition) {
-			return;
-		}
+	}
+	private boolean overWater() {
 		for(int i = 0; i < 5; i++) {
 			if(world.getBlockState(horse.getBlockPos().down(i)).isOf(Blocks.WATER)) {
-				this.clearedWaterCondition = true;
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 
 }
