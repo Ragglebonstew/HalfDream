@@ -1,5 +1,12 @@
 package com.raggle.half_dream.common.item;
 
-public class SleepPotion {
+import net.minecraft.item.Item;
+
+public class SleepPotion extends Item {
+
+	public SleepPotion(Settings settings) {
+		super(settings);
+		// TODO Auto-generated constructor stub
+	}
 
 }

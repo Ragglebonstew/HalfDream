@@ -35,6 +35,10 @@ public abstract class WorldRendererMixin {
 			if(HDUtil.isDreamless(pos)) {
 				blockLight = 4;
 			}
+			else {
+				blockLight -= 2;
+				blockLight = Math.max(blockLight, 0);
+			}
 
 			cir.setReturnValue(0 << 20 | blockLight << 4);
 		}

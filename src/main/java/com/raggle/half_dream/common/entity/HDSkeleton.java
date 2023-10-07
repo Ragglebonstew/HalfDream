@@ -1,10 +1,11 @@
 package com.raggle.half_dream.common.entity;
 
 import com.raggle.half_dream.api.DreamEntity;
-import com.raggle.half_dream.api.DreamServerPlayer;
+import com.raggle.half_dream.api.FollowerTracker;
 import com.raggle.half_dream.common.entity.ai.goal.FollowLaurelGiverGoal;
 import com.raggle.half_dream.common.entity.ai.goal.FormCircleGoal;
 import com.raggle.half_dream.common.registry.HDItemRegistry;
+import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
@@ -29,7 +30,7 @@ public class HDSkeleton extends StrayEntity {
 		super(entityType, world);
 		this.setPathfindingPenalty(PathNodeType.DOOR_OPEN, -1.0F);
 		
-		((DreamEntity)this).setDream(true);
+		HDUtil.setDream(this, (byte) 1);
 	}
 
 	@Override
@@ -53,15 +54,15 @@ public class HDSkeleton extends StrayEntity {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ActionResult interactMob(PlayerEntity player, Hand hand) {
 		ItemStack itemStack = player.getStackInHand(hand);
-		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof DreamServerPlayer dsp) {
-			dsp.addToList(this);
+		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof FollowerTracker ft) {
+			ft.addToList(this);
 			if(player instanceof ServerPlayerEntity serverPlayer) {
 				following = serverPlayer;
 			}
-			//QuiltDimensions.teleport(player, this.getServer().getWorld(DreamBed.DEEP_DREAM), new TeleportTarget(player.getPos(), new Vec3d(0,0,0), 0, 0));
 		}
 		return ActionResult.success(!this.getWorld().isClient());
 	}
@@ -74,12 +75,13 @@ public class HDSkeleton extends StrayEntity {
 	public ServerPlayerEntity getFollowing() {
 		return following;
 	}
-	public DreamServerPlayer getFollowingAsDream() {
-		return (DreamServerPlayer)following;
+	public ServerPlayerEntity getFollowingAsDream() {
+		return following;
 	}
+	@SuppressWarnings("unchecked")
 	public void removeFromList() {
-		if(following != null && following instanceof DreamServerPlayer dsp) {
-			dsp.removeFromList(this);
+		if(following instanceof FollowerTracker ft) {
+			ft.removeFromList(this);
 			following = null;
 		}
 	}

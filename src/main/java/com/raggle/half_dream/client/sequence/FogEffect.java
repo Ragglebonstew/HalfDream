@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 public abstract class FogEffect {
 	
 	public static FogEffect DREAM_FOG = new DreamFogEffect();
+	public static FogEffect CLEAR_FOG = new ClearFogEffect();
 
 	protected boolean finished;
 	protected boolean cancelled;

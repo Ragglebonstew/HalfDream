@@ -3,7 +3,6 @@ package com.raggle.half_dream.common.block;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 
-import com.raggle.half_dream.api.DreamPlayer;
 import com.raggle.half_dream.common.registry.HDEntityRegistry;
 import com.raggle.half_dream.util.HDUtil;
 
@@ -100,7 +99,7 @@ public class DreamBlock extends Block implements Waterloggable {
 	}
 	@Override
 	public boolean canReplace(BlockState state, ItemPlacementContext context) {
-		return context.getPlayer() instanceof DreamPlayer dp && !dp.isDream();
+		return (!HDUtil.isDream(context.getPlayer()));
 	}
 	@Override
 	public boolean canMobSpawnInside(BlockState state) {

@@ -4,8 +4,10 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 
+import com.raggle.half_dream.client.registry.HDClientEventRegistry;
 import com.raggle.half_dream.common.registry.HDBlockRegistry;
 import com.raggle.half_dream.common.registry.HDEntityRegistry;
+import com.raggle.half_dream.networking.HDMessaging;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -22,6 +24,9 @@ public class HalfDreamClient implements ClientModInitializer {
 		BlockRenderLayerMap.put(RenderLayer.getCutout(), HDBlockRegistry.SHEEP_LAUREL_BUSH);
 		
         EntityRendererRegistry.register(HDEntityRegistry.HDSKELETON, StrayEntityRenderer::new);
+        
+        HDClientEventRegistry.init();
+        HDMessaging.registerS2CPackets();
         
 	}
 	
