@@ -4,8 +4,9 @@ import java.util.Optional;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
-import com.raggle.half_dream.api.DreamClientPlayer;
+import com.raggle.half_dream.api.DreamEntity;
 import com.raggle.half_dream.api.DreamlessComponent;
+import com.raggle.half_dream.client.sequence.SequenceManager;
 import com.raggle.half_dream.common.block.DreamBlock;
 import com.raggle.half_dream.common.registry.HDComponentRegistry;
 import com.raggle.half_dream.mixin.WorldRendererAccessor;
@@ -13,12 +14,32 @@ import com.raggle.half_dream.mixin.WorldRendererAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class HDUtil {
+	
+	public static boolean isDream(LivingEntity e) {
+		Optional<DreamEntity> de = HDComponentRegistry.DREAM_ENTITY.maybeGet(e);
+		if(de.isEmpty())
+			return false;
+		return de.get().isDream();
+	}
+	public static byte getDream(LivingEntity e) {
+		Optional<DreamEntity> de = HDComponentRegistry.DREAM_ENTITY.maybeGet(e);
+		if(de.isEmpty())
+			return -1;
+		return de.get().getDream();
+	}
+	public static void setDream(LivingEntity e, byte b) {
+		Optional<DreamEntity> de = HDComponentRegistry.DREAM_ENTITY.maybeGet(e);
+		if(de.isEmpty())
+			return;
+		de.get().setDream(b);
+	}
 
 	@ClientOnly
 	public static boolean isDreamless(BlockPos pos) {
@@ -74,7 +95,8 @@ public class HDUtil {
 	}
 	@ClientOnly
 	public static boolean isPlayerDream() {
-		return getClientPlayer() instanceof DreamClientPlayer dcp && dcp.isDream();
+		return SequenceManager.hasSequence() ? SequenceManager.getSequence().getDreamState() == 1 : isDream(getClientPlayer());
+		//return isDream(getClientPlayer());
 	}
 	@ClientOnly
 	public static void scheduleChunkRenderAt(BlockPos pos) {
