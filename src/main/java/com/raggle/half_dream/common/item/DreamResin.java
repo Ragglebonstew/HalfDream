@@ -23,7 +23,7 @@ public class DreamResin extends Item {
 		World world = context.getWorld();
 		
 		BlockPos pos = context.getBlockPos().offset(context.getSide());
-		if(!world.isClient() && HDUtil.setDreamless(pos, false, world)) {
+		if(!world.isClient() && context.getStack().getCount() >= 1 && HDUtil.setDreamless(pos, false, world)) {
 			context.getStack().decrement(1);
 			world.playSound(null, pos, SoundEvents.ENTITY_ENDER_EYE_DEATH, SoundCategory.BLOCKS);
 			world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, SoundCategory.BLOCKS);

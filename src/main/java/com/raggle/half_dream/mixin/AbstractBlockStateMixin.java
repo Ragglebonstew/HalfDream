@@ -34,8 +34,8 @@ public abstract class AbstractBlockStateMixin {
         if(context instanceof EntityShapeContext esc 
         		&& esc.getEntity() instanceof LivingEntity entity
         		&& HDUtil.isDream(entity)
-            		? world instanceof World w && HDUtil.isDreamless(pos, w)
-            		: this.getBlock() instanceof DreamBlock)
+            	&& world instanceof World w 
+            	&& HDUtil.isDreamless(pos, w))
         {
         	cir.setReturnValue(VoxelShapes.empty());
         }
@@ -47,8 +47,8 @@ public abstract class AbstractBlockStateMixin {
 		if(context instanceof EntityShapeContext esc 
 				&& esc.getEntity() instanceof LivingEntity entity
 				&& HDUtil.isDream(entity) 
-					? world instanceof World w && HDUtil.isDreamless(pos, w)
-					: this.getBlock() instanceof DreamBlock) 
+				&& world instanceof World w 
+				&& HDUtil.isDreamless(pos, w))
 		{
 			cir.setReturnValue(VoxelShapes.empty());
 		}
@@ -60,8 +60,8 @@ public abstract class AbstractBlockStateMixin {
 		if(context instanceof EntityShapeContext esc 
 				&& esc.getEntity() instanceof LivingEntity entity
 				&& HDUtil.isDream(entity) 
-            		? world instanceof World w && HDUtil.isDreamless(pos, w)
-            		: this.getBlock() instanceof DreamBlock) 
+            	&& world instanceof World w 
+            	&& HDUtil.isDreamless(pos, w))
 		{
 			cir.setReturnValue(VoxelShapes.empty());
 		}
@@ -69,10 +69,7 @@ public abstract class AbstractBlockStateMixin {
 	
 	@Inject(method = "onEntityCollision", at = @At("HEAD"), cancellable = true)
     private void onEntityCollision(World world, BlockPos pos, Entity entity, CallbackInfo ci) {
-		if(entity instanceof LivingEntity entity2 && HDUtil.isDream(entity2)
-            		? HDUtil.isDreamless(pos, world)
-            		: this.getBlock() instanceof DreamBlock) 
-		{
+		if(HDUtil.isDream(entity) && HDUtil.isDreamless(pos, world)){
 			ci.cancel();;
 		}
 	}

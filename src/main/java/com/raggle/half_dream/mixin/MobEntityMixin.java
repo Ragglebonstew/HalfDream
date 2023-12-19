@@ -12,6 +12,7 @@ import com.raggle.half_dream.util.HDUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -33,7 +34,7 @@ public abstract class MobEntityMixin extends LivingEntity{
 	}
 	@Inject(method = "interact", at = @At("HEAD"), cancellable = true)
 	public final void interact(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		if(HDUtil.isDream(player) != HDUtil.isDream(this) && HDUtil.getDream(this) != 2)
+		if(HDUtil.isDream(player) != HDUtil.isDream(this) && HDUtil.getDream(this) != 2 && !((Object)this instanceof SkeletonHorseEntity))
 			cir.setReturnValue(ActionResult.FAIL);
 	}
 

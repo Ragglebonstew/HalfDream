@@ -14,6 +14,7 @@ import com.raggle.half_dream.mixin.WorldRendererAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -22,6 +23,9 @@ import net.minecraft.world.chunk.Chunk;
 
 public class HDUtil {
 	
+	public static boolean isDream(Entity e) {
+		return e instanceof LivingEntity le && isDream(le);
+	}
 	public static boolean isDream(LivingEntity e) {
 		Optional<DreamEntity> de = HDComponentRegistry.DREAM_ENTITY.maybeGet(e);
 		if(de.isEmpty())
@@ -52,18 +56,20 @@ public class HDUtil {
 	public static boolean isDreamless(BlockPos pos, World world) {
 		if(world != null) {
 			Chunk chunk = world.getChunk(pos);
-			Block block = chunk.getBlockState(pos).getBlock();
-			if(block instanceof DreamBlock)
-				return false;
-			if(chunk != null) {
-				Optional<DreamlessComponent> op = HDComponentRegistry.DREAMLESS.maybeGet(chunk);
-				if(op.isEmpty())
-					return false;
-				return op.get().isDreamless(pos);
-			}
+			if(chunk == null) return false;
+			return isDreamless(pos, chunk);
 		}
 		return false;
 	}
+	public static boolean isDreamless(BlockPos pos, Chunk chunk) {
+		Block block = chunk.getBlockState(pos).getBlock();
+		if(block instanceof DreamBlock)
+			return false;
+		Optional<DreamlessComponent> op = HDComponentRegistry.DREAMLESS.maybeGet(chunk);
+		if(op.isEmpty())
+			return false;
+		return op.get().isDreamless(pos);
+	}	
 	public static boolean setDreamless(BlockPos pos, boolean dreamless, World world) {
 		if(world != null) {
 			Chunk chunk = world.getChunk(pos);

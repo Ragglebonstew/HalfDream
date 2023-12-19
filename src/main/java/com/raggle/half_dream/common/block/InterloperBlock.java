@@ -31,25 +31,23 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-public class DreamBlock extends Block implements Waterloggable {
+public class InterloperBlock extends Block implements Waterloggable {
 	
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 	
-	public DreamBlock() {
+	public InterloperBlock() {
 		this(QuiltBlockSettings.create());
 	}
-	public DreamBlock(Settings settings) {
+	public InterloperBlock(Settings settings) {
 		super(settings
 				.replaceable()
 				.nonOpaque()
-				.suffocates(DreamBlock::never)
+				.suffocates(InterloperBlock::never)
 				.mapColor(MapColor.NONE)
 				.strength(0.2F)
-				//.ticksRandomly()
 				//.sounds(soundGroup)
-				.allowsSpawning(DreamBlock::onlyDreamEntity)
+				.allowsSpawning(InterloperBlock::onlyDreamEntity)
 				//.blockVision(DreamBlock::never)
-				//.lavaIgnitable()
 				.pistonBehavior(PistonBehavior.DESTROY)
 				//.solidBlock(DreamBlock::never)
 				);

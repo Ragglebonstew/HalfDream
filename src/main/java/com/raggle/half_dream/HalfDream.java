@@ -51,6 +51,7 @@ bug list (things that are broke)
  	- World slice also has a getBlockState method that should be mixin-ed
 - entities make sounds despite dream state
 - can attack entities despite dream state
+- dream block collision is not working
 
 
 check list (things that may/may not be broke anymore)

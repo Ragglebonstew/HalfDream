@@ -14,6 +14,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.util.math.BlockPos;
 
 @ClientOnly
@@ -22,7 +23,7 @@ public class EntityRendererMixin<T extends Entity> {
 
 	@Inject(method = "shouldRender", at = @At("HEAD"), cancellable = true)
 	private void shouldRender(T entity, Frustum frustum, double d, double e, double f, CallbackInfoReturnable<Boolean> cir) {
-		if(entity instanceof LivingEntity le && HDUtil.getDream(le) != 2) {
+		if((entity instanceof LivingEntity le && HDUtil.getDream(le) != 2) && !(entity instanceof SkeletonHorseEntity)) {
 			if(HDUtil.isDream(le) != HDUtil.isPlayerDream()) {
 				cir.setReturnValue(false);
 			}
