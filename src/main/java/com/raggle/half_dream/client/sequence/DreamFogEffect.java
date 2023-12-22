@@ -7,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 public class DreamFogEffect extends FogEffect{
 	@Override
 	public void tick(MinecraftClient client) {
-		if(!HDUtil.isDream(client.player))
+		if(HDUtil.getDream(client.player) != 1)
 			this.finished = true;
 	}
 }

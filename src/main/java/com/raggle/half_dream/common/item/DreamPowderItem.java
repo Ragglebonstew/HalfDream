@@ -12,18 +12,20 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class DreamResin extends Item {
+public class DreamPowderItem extends Item {
 
-	public DreamResin() {
-		super(new QuiltItemSettings().fireproof());
+	public DreamPowderItem() {
+		super(new QuiltItemSettings());
 	}
 
 	@Override
 	public ActionResult useOnBlock(ItemUsageContext context) {
 		World world = context.getWorld();
+		BlockPos pos = context.getBlockPos();
 		
-		BlockPos pos = context.getBlockPos().offset(context.getSide());
-		if(!world.isClient() && context.getStack().getCount() >= 1 && HDUtil.setDisturbed(pos, false, world)) {
+		if(!world.isClient() && context.getStack().getCount() >= 1 
+				&& HDUtil.setDream(pos, !HDUtil.isDream(pos, world), world)) 
+		{
 			context.getStack().decrement(1);
 			world.playSound(null, pos, SoundEvents.ENTITY_ENDER_EYE_DEATH, SoundCategory.BLOCKS);
 			world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, SoundCategory.BLOCKS);

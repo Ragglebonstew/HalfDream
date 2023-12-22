@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.raggle.half_dream.common.registry.HDTagRegistry;
 import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.entity.ItemEntity;
@@ -20,7 +19,10 @@ public abstract class ItemEntityMixin {
 
 	@Inject(method = "onPlayerCollision", at = @At("HEAD"), cancellable = true)
 	private void onPlayerCollision(PlayerEntity player, CallbackInfo ci) {
-		if(getStack().isIn(HDTagRegistry.DREAMING_ITEMS) != HDUtil.isDream(player)) {
+		/*if(getStack().isIn(HDTagRegistry.DREAMING_ITEMS) != HDUtil.isDream(player)) {
+			ci.cancel();
+		}*/
+		if(!HDUtil.sameDream((ItemEntity)(Object)this, player)) {
 			ci.cancel();
 		}
 	}

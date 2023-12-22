@@ -81,8 +81,8 @@ public class CrossRiverGoal extends Goal{
 				&& !this.failed
 				&& horse instanceof HorseRiderAccess dh
 		) {
-			byte newDream = HDUtil.isDream(dh.getPlayer()) ? 0 : (byte)1;
-			HDUtil.setDream(dh.getPlayer(), newDream);
+			byte newDream = HDUtil.getDream(dh.getPlayer());
+			if(newDream != 2) HDUtil.setDream(dh.getPlayer(), (byte)(newDream == 1 ? 0 : 1));
 		}
 		else if(SequenceManager.hasFogEffect()){
 			SequenceManager.getFogEffect().cancel();

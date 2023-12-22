@@ -4,6 +4,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import com.raggle.half_dream.common.registry.HDEntityRegistry;
 import com.raggle.half_dream.util.HDUtil;
+import com.raggle.half_dream.util.HDUtilClient;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -13,9 +14,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.Waterloggable;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -28,7 +27,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
 public class InterloperBlock extends Block implements Waterloggable {
@@ -58,46 +56,41 @@ public class InterloperBlock extends Block implements Waterloggable {
 	@ClientOnly
 	@Override
     public BlockRenderType getRenderType(BlockState state) {
-		if(HDUtil.isPlayerDream())
+		if(HDUtilClient.getPlayerDream() != 0)
 			return BlockRenderType.MODEL;
 		
         return BlockRenderType.INVISIBLE;
     }
 
+	@ClientOnly
 	@Override
 	public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-		if(!HDUtil.isPlayerDream())
+		if(HDUtilClient.getPlayerDream() == 0)
 			return 1.0F;
 		return 0.2F;
 	}
 	
 	@Override
     public VoxelShape getOutlineShape(BlockState state, BlockView blockView, BlockPos pos, ShapeContext context) {
-		if(context instanceof EntityShapeContext esc && esc.getEntity() instanceof LivingEntity entity && !HDUtil.isDream(entity)) {
+		if(context instanceof EntityShapeContext esc && esc.getEntity() != null && HDUtil.getDream(esc.getEntity()) == 0) {
 			return VoxelShapes.empty();
 		}
 		return VoxelShapes.fullCube();
     }
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockView blockView, BlockPos pos, ShapeContext context) {
-		if(context instanceof EntityShapeContext esc && esc.getEntity() instanceof LivingEntity entity && !HDUtil.isDream(entity)) {
+		if(context instanceof EntityShapeContext esc && esc.getEntity() != null && HDUtil.getDream(esc.getEntity()) == 0) {
 			return VoxelShapes.empty();
 		}
 		return VoxelShapes.fullCube();
     }
 	@Override
 	public VoxelShape getCameraCollisionShape(BlockState state, BlockView blockView, BlockPos pos, ShapeContext context) {
-		if(context instanceof EntityShapeContext esc && esc.getEntity() instanceof LivingEntity entity && !HDUtil.isDream(entity)) {
+		if(context instanceof EntityShapeContext esc && esc.getEntity() != null && HDUtil.getDream(esc.getEntity()) == 0) {
 			return VoxelShapes.empty();
 		}
 		return VoxelShapes.fullCube();
     }
-	@Override
-	public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-		if(HDUtil.isDream(entity) && HDUtil.isDreamless(pos, world)){
-			return;
-		}
-	}
 	@ClientOnly
 	@Override
 	public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
@@ -110,7 +103,7 @@ public class InterloperBlock extends Block implements Waterloggable {
 	}
 	@Override
 	public boolean canReplace(BlockState state, ItemPlacementContext context) {
-		return (!HDUtil.isDream(context.getPlayer()));
+		return (HDUtil.getDream(context.getPlayer()) == 0);
 	}
 	@Override
 	public boolean canMobSpawnInside(BlockState state) {

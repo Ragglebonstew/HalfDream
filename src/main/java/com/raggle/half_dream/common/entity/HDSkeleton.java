@@ -1,6 +1,5 @@
 package com.raggle.half_dream.common.entity;
 
-import com.raggle.half_dream.api.DreamEntity;
 import com.raggle.half_dream.api.FollowerTracker;
 import com.raggle.half_dream.common.entity.ai.goal.FollowLaurelGiverGoal;
 import com.raggle.half_dream.common.entity.ai.goal.FormCircleGoal;
@@ -48,9 +47,8 @@ public class HDSkeleton extends StrayEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if(this.getTarget() instanceof DreamEntity de) {
-			if(!de.isDream())
-				this.setTarget(null);
+		if(HDUtil.getDream(this.getTarget()) == 0) {
+			this.setTarget(null);
 		}
 	}
 
@@ -58,7 +56,7 @@ public class HDSkeleton extends StrayEntity {
 	@Override
 	public ActionResult interactMob(PlayerEntity player, Hand hand) {
 		ItemStack itemStack = player.getStackInHand(hand);
-		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof FollowerTracker ft) {
+		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof @SuppressWarnings("rawtypes") FollowerTracker ft) {
 			ft.addToList(this);
 			if(player instanceof ServerPlayerEntity serverPlayer) {
 				following = serverPlayer;
@@ -80,7 +78,7 @@ public class HDSkeleton extends StrayEntity {
 	}
 	@SuppressWarnings("unchecked")
 	public void removeFromList() {
-		if(following instanceof FollowerTracker ft) {
+		if(following instanceof @SuppressWarnings("rawtypes") FollowerTracker ft) {
 			ft.removeFromList(this);
 			following = null;
 		}

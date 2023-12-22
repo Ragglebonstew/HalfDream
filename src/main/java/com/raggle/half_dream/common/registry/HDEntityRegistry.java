@@ -26,12 +26,17 @@ public class HDEntityRegistry {
             new Identifier(HalfDream.MOD_ID, "hdskeleton"),
             QuiltEntityTypeBuilder.create(SpawnGroup.CREATURE, HDSkeleton::new).build()
     );
+    public static final EntityType<HDSkeleton> DISTURBED_ITEM = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier(HalfDream.MOD_ID, "disturbed_item"),
+            QuiltEntityTypeBuilder.create(SpawnGroup.MISC, HDSkeleton::new).build()
+    );
     
     public static void init() {
     	
         FabricDefaultAttributeRegistry.register(HDSKELETON, HDSkeleton.createAttributes());
         BiomeModifications.addSpawn(BiomeSelectors.includeByKey(Biomes.PLAINS), SpawnGroup.MONSTER, HDSKELETON, 40, 1, 2);
         SpawnRestriction.register(HDSKELETON, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
-        
+
     }
 }

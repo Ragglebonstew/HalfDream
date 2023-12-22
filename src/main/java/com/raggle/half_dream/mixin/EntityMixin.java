@@ -10,7 +10,6 @@ import com.raggle.half_dream.api.HorseRiderAccess;
 import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 @Mixin(Entity.class)
@@ -18,7 +17,7 @@ public abstract class EntityMixin {
 
 	@Inject(method = "isInsideWall", at = @At("HEAD"), cancellable = true)
 	private void isInsideWall(CallbackInfoReturnable<Boolean> cir) {
-		if((Object)this instanceof LivingEntity e && HDUtil.isDream(e)) {
+		if(HDUtil.getDream((Entity)(Object)this) != 0) {
 			cir.setReturnValue(false);
 		}
 	}

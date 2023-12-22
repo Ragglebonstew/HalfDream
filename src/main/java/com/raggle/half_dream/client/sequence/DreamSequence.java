@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 @ClientOnly
 public abstract class DreamSequence {
 	
-	protected static MinecraftClient client = MinecraftClient.getInstance();
+	protected static final MinecraftClient client = MinecraftClient.getInstance();
 
 	protected int ticks;
 	protected int totalLength = 60;
@@ -21,9 +21,7 @@ public abstract class DreamSequence {
 	public FogEffect getFogEffect() {
 		return null;
 	}
-	public byte getDreamState() {
-		return -1;
-	}
+	public abstract byte getDreamState();
 	public abstract void start();
 	public abstract void stop();
 	public void cancel() {

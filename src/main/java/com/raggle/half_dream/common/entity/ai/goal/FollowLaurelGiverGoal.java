@@ -27,7 +27,7 @@ public class FollowLaurelGiverGoal extends Goal {
 		return followTime < MAX_TIME 
 				&& skeleton.getFollowing() != null
 				&& skeleton.getFollowing().isAlive()
-				&& HDUtil.isDream(skeleton.getFollowingAsDream());
+				&& HDUtil.getDream(skeleton.getFollowingAsDream()) != 0;
 	}
 	@Override
 	public void start() {

@@ -25,7 +25,7 @@ public class SequenceManager {
 				fogEffect = null;
 			}
 		}
-		else if(HDUtil.isDream(client.player)) {
+		else if(HDUtil.getDream(client.player) == 1) {
 			setFogEffect(FogEffect.DREAM_FOG);
 		}
 			

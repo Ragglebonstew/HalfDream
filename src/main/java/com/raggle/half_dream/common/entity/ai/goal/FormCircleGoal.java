@@ -20,14 +20,14 @@ public class FormCircleGoal extends Goal{
 
 	@Override
 	public boolean canStart() {
-		if(skeleton.getFollowing() instanceof FollowerTracker ft) {
+		if(skeleton.getFollowing() instanceof FollowerTracker<?> ft) {
 			return ft.hasEnough(4) && ft.getList().contains(skeleton);
 		}
 		return false;
 	}
 	@Override
 	public boolean shouldContinue() {
-		return skeleton.getFollowing() instanceof FollowerTracker ft
+		return skeleton.getFollowing() instanceof FollowerTracker<?> ft
 				&& ft.getList().contains(skeleton)
 				&& ft.hasEnough(4)
 				&& skeleton.getFollowing().isAlive();
@@ -41,7 +41,7 @@ public class FormCircleGoal extends Goal{
 	@Override
 	public void tick() {
 		ServerPlayerEntity player = skeleton.getFollowing();
-		if(player instanceof FollowerTracker ft) {
+		if(player instanceof FollowerTracker<?> ft) {
 			int posInList = ft.getList().indexOf(skeleton);
 			int listSize = ft.getList().size();
 			
