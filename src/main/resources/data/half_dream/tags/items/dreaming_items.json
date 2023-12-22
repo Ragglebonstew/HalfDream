@@ -1,5 +1,12 @@
 {
   "values": [
-    "half_dream:dream_resin"
+    "half_dream:sheep_laurel",
+    "half_dream:dream_resin",
+    
+    "half_dream:dream_log",
+    "half_dream:dream_wood",
+    "half_dream:stripped_dream_log",
+    "half_dream:stripped_dream_wood",
+    "half_dream:dream_leaves"
   ]
 }

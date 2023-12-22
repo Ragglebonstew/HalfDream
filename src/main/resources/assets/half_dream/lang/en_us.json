@@ -12,5 +12,6 @@
 	"block.half_dream.dream_leaves" : "Dream Leaves",
 	"block.half_dream.dream_sapling" : "Dream Sapling",
 	"item.half_dream.dream_sapling" : "Dream Sapling",
-	"item.half_dream.dream_resin" : "Dream Resin"
+	"item.half_dream.dream_resin" : "Dream Resin",
+	"item.half_dream.dream_powder" : "Dream Powder"
 }

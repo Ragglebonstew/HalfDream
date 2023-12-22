@@ -5,11 +5,13 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"AbstractBlockStateMixin",
+		"BlockMixin",
 		"EntityMixin",
 		"ItemEntityMixin",
 		"LandPathNodeMakerMixin",
 		"LivingEntityMixin",
-		"MobEntityMixin",
+		"MobEntityAccessor",
+		"PlayerEntityMixin",
 		"ServerPlayerEntityMixin",
 		"SkeletonHorseEntityMixin",
 		"TrunkPlacerTypeMixin",
@@ -20,7 +22,8 @@
 		"ChunkRenderRegionMixin",
 		"EntityRendererMixin",
 		"WorldRendererAccessor",
-		"WorldRendererMixin"
+		"WorldRendererMixin",
+		"WorldSliceMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
