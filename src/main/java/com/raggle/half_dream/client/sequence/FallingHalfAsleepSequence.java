@@ -1,51 +1,49 @@
 package com.raggle.half_dream.client.sequence;
 
+import com.raggle.half_dream.HalfDream;
+import com.raggle.half_dream.api.DreamClientPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.util.ColorUtil;
 
 public class FallingHalfAsleepSequence extends DreamSequence {
 
-	private byte endDream;
-	private byte startDream;
+	private boolean toDream;
+	private boolean startDream;
 
-	public FallingHalfAsleepSequence(byte startDream, byte endDream) {
+	public FallingHalfAsleepSequence(DreamClientPlayer player, boolean startDream, boolean toDream) {
 		this.startDream = startDream;
-		this.endDream = endDream;
+		this.toDream = toDream;
+		ticks = 0;
+		HalfDream.LOGGER.info("Starting half asleep sequence");
 	}
 	@Override
-	public void stop() {}
+	public void stop() {
+		super.stop();
+		HalfDream.LOGGER.info("Stopping half asleep sequence");
+	}
 
 	@Override
-	public boolean hasFogEffect() {
+	public boolean isSequenceImportant() {
 		return true;
 	}
 	@Override
-	public FogEffect getFogEffect() {
-		if(hasTransitioned() ? endDream == 1 : startDream == 1) {
-			return FogEffect.DREAM_FOG;
-		}
-		else {
-			return FogEffect.CLEAR_FOG;
-		}
-	}
-	@Override
-	public byte getDreamState() {
-		return hasTransitioned() ? endDream : startDream;
+	public boolean getDreamState() {
+		return hasTransitioned() ? toDream : startDream;
 	}
 	public boolean hasTransitioned() {
 		return ticks >= totalLength/3;
 	}
-	public void setStartDream(byte startDream) {
+	public void setStartDream(boolean startDream) {
 		this.startDream = startDream;
 	}
-	public void setEndDream(byte endDream) {
-		this.endDream = endDream;
+	public void setEndDream(boolean endDream) {
+		this.toDream = endDream;
 	}
-	public byte getStartDream() {
+	public boolean getStartDream() {
 		return startDream;
 	}
-	public byte getEndDream() {
-		return endDream;
+	public boolean getEndDream() {
+		return toDream;
 	}
 	@Override
 	public void tick() {
@@ -78,10 +76,6 @@ public class FallingHalfAsleepSequence extends DreamSequence {
 		
 		drawContext.fill(0, 0, width, height, ColorUtil.ABGR32.getColor(backgroundProgress, 0, 0, 0));
 		
-	}
-	@Override
-	public void start() {
-		this.ticks = 0;
 	}
 
 }

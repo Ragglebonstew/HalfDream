@@ -1,6 +1,8 @@
 package com.raggle.half_dream.common.entity.ai.goal;
 
-import com.raggle.half_dream.api.FollowerTracker;
+import java.util.ArrayList;
+
+import com.raggle.half_dream.api.DreamServerPlayer;
 import com.raggle.half_dream.common.entity.HDSkeleton;
 
 import net.minecraft.entity.ai.goal.Goal;
@@ -20,16 +22,20 @@ public class FormCircleGoal extends Goal{
 
 	@Override
 	public boolean canStart() {
-		if(skeleton.getFollowing() instanceof FollowerTracker<?> ft) {
-			return ft.hasEnough(4) && ft.getList().contains(skeleton);
+		if(skeleton.getFollowing() instanceof DreamServerPlayer dsp && dsp != null) {
+			ArrayList<HDSkeleton> tempList = dsp.getList();
+			return tempList != null 
+					&& tempList.size() >= 4 
+					&& tempList.contains(skeleton);
 		}
 		return false;
 	}
 	@Override
 	public boolean shouldContinue() {
-		return skeleton.getFollowing() instanceof FollowerTracker<?> ft
-				&& ft.getList().contains(skeleton)
-				&& ft.hasEnough(4)
+		DreamServerPlayer player = skeleton.getFollowingAsDream();
+		return player != null
+				&& player.getList().contains(skeleton)
+				&& player.getList().size() >= 4 
 				&& skeleton.getFollowing().isAlive();
 	}
 	@Override
@@ -41,18 +47,17 @@ public class FormCircleGoal extends Goal{
 	@Override
 	public void tick() {
 		ServerPlayerEntity player = skeleton.getFollowing();
-		if(player instanceof FollowerTracker<?> ft) {
-			int posInList = ft.getList().indexOf(skeleton);
-			int listSize = ft.getList().size();
-			
-			double anglePos = 2 * Math.PI * posInList / listSize;
-			
-			double x = Math.cos(anglePos)*distance + player.getX();
-			double z = Math.sin(anglePos)*distance + player.getZ();
-			
-			skeleton.getNavigation().startMovingTo(x, player.getY(), z, speed);
-			skeleton.getLookControl().lookAt(player);
-		}
+		DreamServerPlayer dsp = skeleton.getFollowingAsDream();
+		int posInList = dsp.getList().indexOf(skeleton);
+		int listSize = dsp.getList().size();
+		
+		double anglePos = 2 * Math.PI * posInList / listSize;
+		
+		double x = Math.cos(anglePos)*distance + player.getX();
+		double z = Math.sin(anglePos)*distance + player.getZ();
+		
+		skeleton.getNavigation().startMovingTo(x, player.getY(), z, speed);
+		skeleton.getLookControl().lookAt(player);
 	}
 
 }

@@ -1,10 +1,10 @@
 package com.raggle.half_dream.common.entity;
 
-import com.raggle.half_dream.api.FollowerTracker;
+import com.raggle.half_dream.api.DreamEntityComponent;
+import com.raggle.half_dream.api.DreamServerPlayer;
 import com.raggle.half_dream.common.entity.ai.goal.FollowLaurelGiverGoal;
 import com.raggle.half_dream.common.entity.ai.goal.FormCircleGoal;
 import com.raggle.half_dream.common.registry.HDItemRegistry;
-import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
@@ -29,7 +29,7 @@ public class HDSkeleton extends StrayEntity {
 		super(entityType, world);
 		this.setPathfindingPenalty(PathNodeType.DOOR_OPEN, -1.0F);
 		
-		HDUtil.setDream(this, (byte) 1);
+		((DreamEntityComponent)this).setDream(true);
 	}
 
 	@Override
@@ -47,20 +47,21 @@ public class HDSkeleton extends StrayEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if(HDUtil.getDream(this.getTarget()) == 0) {
-			this.setTarget(null);
+		if(this.getTarget() instanceof DreamEntityComponent de) {
+			if(!de.isDream())
+				this.setTarget(null);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ActionResult interactMob(PlayerEntity player, Hand hand) {
 		ItemStack itemStack = player.getStackInHand(hand);
-		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof @SuppressWarnings("rawtypes") FollowerTracker ft) {
-			ft.addToList(this);
+		if(itemStack.isOf(HDItemRegistry.SHEEP_LAUREL) && player instanceof DreamServerPlayer dsp) {
+			dsp.addToList(this);
 			if(player instanceof ServerPlayerEntity serverPlayer) {
 				following = serverPlayer;
 			}
+			//QuiltDimensions.teleport(player, this.getServer().getWorld(DreamBed.DEEP_DREAM), new TeleportTarget(player.getPos(), new Vec3d(0,0,0), 0, 0));
 		}
 		return ActionResult.success(!this.getWorld().isClient());
 	}
@@ -73,13 +74,12 @@ public class HDSkeleton extends StrayEntity {
 	public ServerPlayerEntity getFollowing() {
 		return following;
 	}
-	public ServerPlayerEntity getFollowingAsDream() {
-		return following;
+	public DreamServerPlayer getFollowingAsDream() {
+		return (DreamServerPlayer)following;
 	}
-	@SuppressWarnings("unchecked")
 	public void removeFromList() {
-		if(following instanceof @SuppressWarnings("rawtypes") FollowerTracker ft) {
-			ft.removeFromList(this);
+		if(following != null && following instanceof DreamServerPlayer dsp) {
+			dsp.removeFromList(this);
 			following = null;
 		}
 	}

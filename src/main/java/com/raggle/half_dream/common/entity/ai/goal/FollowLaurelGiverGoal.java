@@ -1,7 +1,6 @@
 package com.raggle.half_dream.common.entity.ai.goal;
 
 import com.raggle.half_dream.common.entity.HDSkeleton;
-import com.raggle.half_dream.util.HDUtil;
 
 import net.minecraft.entity.ai.goal.Goal;
 
@@ -27,7 +26,7 @@ public class FollowLaurelGiverGoal extends Goal {
 		return followTime < MAX_TIME 
 				&& skeleton.getFollowing() != null
 				&& skeleton.getFollowing().isAlive()
-				&& HDUtil.getDream(skeleton.getFollowingAsDream()) != 0;
+				&& skeleton.getFollowingAsDream().isDream();
 	}
 	@Override
 	public void start() {

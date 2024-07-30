@@ -26,7 +26,7 @@ public class HalfDreamClient implements ClientModInitializer {
         EntityRendererRegistry.register(HDEntityRegistry.HDSKELETON, StrayEntityRenderer::new);
         
         HDClientEventRegistry.init();
-        HDMessaging.init();
+        HDMessaging.registerS2CPackets();
         
 	}
 	

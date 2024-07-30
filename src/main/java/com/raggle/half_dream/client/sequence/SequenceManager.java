@@ -1,20 +1,18 @@
 package com.raggle.half_dream.client.sequence;
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-
-import com.raggle.half_dream.util.HDUtil;
+import com.raggle.half_dream.HalfDream;
+import com.raggle.half_dream.api.DreamClientPlayer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 
-@ClientOnly
 public class SequenceManager {
 
 	private static DreamSequence dreamSequence;
 	private static FogEffect fogEffect;
 
 	public static void tick(MinecraftClient client) {
-		if(client.isPaused() || client.player == null)
+		if(client.isPaused())
 			return;
 		
 		//fogEffect ticking
@@ -25,13 +23,13 @@ public class SequenceManager {
 				fogEffect = null;
 			}
 		}
-		else if(HDUtil.getDream(client.player) == 1) {
+		else if(client.player instanceof DreamClientPlayer dcp && dcp.isDream()) {
 			setFogEffect(FogEffect.DREAM_FOG);
 		}
 			
 		
 		//sequence ticking
-		if (hasSequence()) {
+		if (hasSequence() && client.player != null) {
 			dreamSequence.tick();
 			if(dreamSequence.finished) {
 				dreamSequence.stop();
@@ -86,20 +84,20 @@ public class SequenceManager {
 		return dreamSequence;
 	}
 	public static boolean hasFogEffect() {
-		return sequenceHasFogEffect() || fogEffect != null;
+		return fogEffect != null;
 	}
 	public static void setFogEffect(FogEffect effect) {
 		fogEffect = effect;
 		fogEffect.start();
 	}
 	public static FogEffect getFogEffect() {
-		return sequenceHasFogEffect() ? dreamSequence.getFogEffect() : fogEffect;
+		return fogEffect;
 	}
-	public static boolean sequenceHasFogEffect() {
+	public static boolean isCurrentSequenceImportant() {
 		if(!hasSequence()) {
 			return false;
 		}
-		return dreamSequence.hasFogEffect();
+		return dreamSequence.isSequenceImportant();
 	}
 	
 }

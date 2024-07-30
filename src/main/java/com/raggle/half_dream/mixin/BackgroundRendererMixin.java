@@ -25,12 +25,9 @@ public abstract class BackgroundRendererMixin {
 	
 	@Inject(method = "applyFog", at = @At("TAIL"))
 	private static void applyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
-
+	
 		if(SequenceManager.hasFogEffect()) {
 			FogEffect fog = SequenceManager.getFogEffect();
-			if(fog == FogEffect.CLEAR_FOG)
-				return;
-			
 			if (fogType == BackgroundRenderer.FogType.FOG_SKY) {
 				RenderSystem.setShaderFogStart(0.0f);
 				RenderSystem.setShaderFogEnd(viewDistance);
@@ -49,8 +46,6 @@ public abstract class BackgroundRendererMixin {
 	private static void render(Camera camera, float tickDelta, ClientWorld world, int viewDistance, float skyDarkness, CallbackInfo ci) {
 		if(SequenceManager.hasFogEffect()) {
 			FogEffect fog = SequenceManager.getFogEffect();
-			if(fog == FogEffect.CLEAR_FOG)
-				return;
 			//transitions sky between default and fog colors based on alpha progress
 			float r = fog.alpha * (fog.red - red) + red;
 			float g = fog.alpha * (fog.green - green) + green;
@@ -63,8 +58,6 @@ public abstract class BackgroundRendererMixin {
 	private static void setShaderFogColor(CallbackInfo ci) {
 		if(SequenceManager.hasFogEffect()) {
 			FogEffect fog = SequenceManager.getFogEffect();
-			if(fog == FogEffect.CLEAR_FOG)
-				return;
 			RenderSystem.setShaderFogColor(fog.red, fog.green, fog.blue, fog.alpha);
 		}
 	}

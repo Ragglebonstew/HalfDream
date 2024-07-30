@@ -6,29 +6,28 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 
 @ClientOnly
-public abstract class DreamSequence {
+public class DreamSequence {
 	
-	protected static final MinecraftClient client = MinecraftClient.getInstance();
+	protected static MinecraftClient client = MinecraftClient.getInstance();
 
 	protected int ticks;
 	protected int totalLength = 60;
 	protected boolean finished;
 	protected boolean cancelled;
 	
-	public boolean hasFogEffect() {
+	public boolean isSequenceImportant() {
 		return false;
 	}
-	public FogEffect getFogEffect() {
-		return null;
+	public boolean getDreamState() {
+		return false;
 	}
-	public abstract byte getDreamState();
-	public abstract void start();
-	public abstract void stop();
+	public void start() {}
+	public void stop() {}
 	public void cancel() {
 		this.cancelled = true;
 	}
 	
-	public abstract void tick();
-	public abstract void render(GuiGraphics drawContext, float tickDelta);
+	public void tick() {}
+	public void render(GuiGraphics drawContext, float tickDelta) {}
 	
 }
