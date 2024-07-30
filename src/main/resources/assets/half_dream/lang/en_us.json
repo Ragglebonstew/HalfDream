@@ -1,0 +1,16 @@
+{
+	"effect.half_dream.half_asleep" : "Half Asleep",
+	"item.minecraft.potion.effect.half_asleep_potion" : "Potion of Half Sleeping",
+	"item.minecraft.splash_potion.effect.half_asleep_potion" : "Splash Potion of Half Sleeping",
+	"item.minecraft.lingering_potion.effect.half_asleep_potion" : "Lingering Potion of Half Sleeping",
+	"item.half_dream.sheep_laurel" : "Sheep Laurel",
+	"block.half_dream.dream_block" : "Dream Block",
+	"block.half_dream.dream_log" : "Dream Log",
+	"block.half_dream.dream_wood" : "Dream Wood",
+	"block.half_dream.stripped_dream_log" : "Stripped Dream Log",
+	"block.half_dream.stripped_dream_wood" : "Stripped Dream Wood",
+	"block.half_dream.dream_leaves" : "Dream Leaves",
+	"block.half_dream.dream_sapling" : "Dream Sapling",
+	"item.half_dream.dream_sapling" : "Dream Sapling",
+	"item.half_dream.dream_resin" : "Dream Resin"
+}
