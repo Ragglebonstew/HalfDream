@@ -1,3 +1,5 @@
+This repository is no longer in use. Go to [Faesied](https://github.com/Ragglebonstew/Faesied) for the current one. Mod is still called Half Dream, some stuff just happened on my end.
+
 # HalfDream
 
 Changelog
